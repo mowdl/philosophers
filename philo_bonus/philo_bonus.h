@@ -36,6 +36,7 @@ typedef struct s_data
 	unsigned long	time_to_sleep;
 	unsigned long	time_to_die;
 	unsigned long	eat_max;
+	pthread_t		watcher;
 	int				count_eat;
 	sem_t			*forks;
 	sem_t			*printing;
@@ -55,11 +56,11 @@ typedef struct	philo
 	
 }					t_philo;
 
-int	parse_args(int ac, char **av, t_data *data);
+int				parse_args(int ac, char **av, t_data *data);
 
-void	philo_process(t_data *data, int id);
-void	ft_sleep(unsigned long mili_sec);
-unsigned long	get_timestamp();
+int				philo_process(t_data *data, int id);
+void			ft_sleep(unsigned long mili_sec);
+unsigned long	get_timestamp(void);
 
 #endif // !PHILO_BONUS_H
 

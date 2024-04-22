@@ -59,5 +59,8 @@ int	parse_args(int ac, char **av, t_data *data)
 	}
 	else
 		data->count_eat = 0;
+	if (data->n < 1 || data->n > 200 || data->time_to_die < 60
+		|| data->time_to_eat < 60 || data->time_to_sleep < 60)
+		return (1);
 	return (0);
 }

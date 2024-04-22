@@ -16,14 +16,19 @@ void	*watcher(void *arg)
 {
 	t_philo			*philo;
 	unsigned long	last_eat;
+	unsigned long	eat_count;
 
 	philo = arg;
 	while (1)
 	{
+		ft_sleep(5);
 		sem_wait(philo->data->update);
 		last_eat = philo->last_eat;
+		eat_count = philo->eat_count;
 		sem_post(philo->data->update);
-		if (get_timestamp() - last_eat >= philo->data->eat_max)
+		if (philo->data->count_eat && eat_count >= philo->data->eat_max)
+			return (NULL);
+		if (get_timestamp() - last_eat >= philo->data->time_to_die)
 			break ;
 	}
 	sem_wait(philo->data->printing);
@@ -32,55 +37,42 @@ void	*watcher(void *arg)
 	return (NULL);
 }
 
-void	*time_to_die(void *arg)
+void	eat(t_philo *philo)
 {
-	t_data *data;
-	int sval = -1;
-
-	data = arg;
-sem_getvalue(data->forks, &sval);
-printf("REACHED %i\n", sval);
-	sem_wait(data->dead);
-	sem_post(data->dead);
-	sem_close(data->forks);
-	sem_close(data->printing);
-	sem_close(data->dead);
-	sem_close(data->update);
-	exit(0);
-	return (NULL);
-}
-
-void	init_philo(t_philo *philo, t_data *data, int id)
-{
-	philo->id = id;
-	philo->data = data;
-	philo->eat_count = 0;
-	philo->last_eat = 0;
+	sem_wait(philo->data->forks);
+	sem_wait(philo->data->printing);
+	printf("%ld %i has taken a fork\n", get_timestamp(), philo->id);
+	sem_post(philo->data->printing);
+	sem_wait(philo->data->forks);
+	sem_wait(philo->data->printing);
+	printf("%ld %i has taken a fork\n", get_timestamp(), philo->id);
+	printf("%ld %i is eating\n", get_timestamp(), philo->id);
+	sem_post(philo->data->printing);
+	sem_wait(philo->data->update);
+	philo->last_eat = get_timestamp();
+	sem_post(philo->data->update);
+	ft_sleep(philo->data->time_to_eat);
+	sem_post(philo->data->forks);
+	sem_post(philo->data->forks);
 }
 
 void	routine(t_philo *philo)
 {
+	sem_wait(philo->data->printing);
+	printf("%ld %i is thinking\n", get_timestamp(), philo->id);
+	sem_post(philo->data->printing);
+	if (philo->data->n % 2)
+		ft_sleep(philo->data->time_to_eat * (philo->id - 1) / philo->data->n);
+	else if (philo->id % 2)
+		ft_sleep(philo->data->time_to_eat / 2);
 	while (1)
 	{
-		sem_wait(philo->data->forks);
-		sem_wait(philo->data->printing);
-		printf("%ld %i has taken a fork\n", get_timestamp(), philo->id);
-		sem_post(philo->data->printing);
-		sem_wait(philo->data->forks);
-		sem_wait(philo->data->printing);
-		printf("%ld %i has taken a fork\n", get_timestamp(), philo->id);
-		printf("%ld %i is eating\n", get_timestamp(), philo->id);
-		sem_post(philo->data->printing);
-
+		eat(philo);
 		sem_wait(philo->data->update);
-		philo->last_eat = get_timestamp();
+		if (philo->data->count_eat
+			&& philo->eat_count++ == philo->data->eat_max)
+			return ;
 		sem_post(philo->data->update);
-
-		ft_sleep(philo->data->time_to_eat);
-		sem_post(philo->data->forks);
-		sem_post(philo->data->forks);
-		if (philo->data->count_eat && ++philo->eat_count == philo->data->eat_max)
-			break ;
 		sem_wait(philo->data->printing);
 		printf("%ld %i is sleeping\n", get_timestamp(), philo->id);
 		sem_post(philo->data->printing);
@@ -91,20 +83,21 @@ void	routine(t_philo *philo)
 	}
 }
 
-void	philo_process(t_data *data, int id)
+int	philo_process(t_data *data, int id)
 {
 	t_philo	philo;
 
-	init_philo(&philo, data, id);
+	philo.id = id;
+	philo.data = data;
+	philo.eat_count = 0;
+	philo.last_eat = 0;
 	pthread_create(&philo.watcher, NULL, &watcher, &philo);
-	pthread_create(&philo.time_to_die, NULL, &time_to_die, &philo);
-
 	routine(&philo);
-
+	sem_post(philo.data->update);
+	pthread_join(philo.watcher, NULL);
 	sem_close(data->forks);
 	sem_close(data->printing);
 	sem_close(data->dead);
 	sem_close(data->update);
-
-	exit(0);
+	return (0);
 }
