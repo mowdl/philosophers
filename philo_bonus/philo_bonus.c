@@ -12,30 +12,6 @@
 
 #include "philo_bonus.h"
 
-unsigned long	get_timestamp()
-{
-	static int				init;
-	static struct timeval	start_time;
-	struct timeval			now;
-
-	if (init == 0)
-	{
-		gettimeofday(&start_time, NULL);
-		init = 1;
-	}
-	gettimeofday(&now, NULL);
-	return (now.tv_sec - start_time.tv_sec) * 1000 + (now.tv_usec - start_time.tv_usec) / 1000;
-}
-
-void	ft_sleep(unsigned long mili_sec)
-{
-	unsigned long	start_time;
-
-	start_time = get_timestamp();
-	while ((get_timestamp() - start_time) < mili_sec)
-		usleep(1);
-}
-
 int	init_data(int ac, char **av, t_data *data)
 {
 	if (parse_args(ac, av, data))
@@ -73,14 +49,21 @@ void	*main_watcher(void *arg)
 	return (NULL);
 }
 
+void	close_sems(t_data *data)
+{
+	sem_close(data->forks);
+	sem_close(data->printing);
+	sem_close(data->dead);
+	sem_close(data->update);
+}
+
 int	main(int ac, char **av)
 {
 	t_data	data;
 	int		i;
-	
+
 	if (init_data(ac, av, &data))
 		return (1);
-
 	get_timestamp();
 	i = 0;
 	while (i < data.n)
@@ -93,15 +76,10 @@ int	main(int ac, char **av)
 		i++;
 	}
 	pthread_create(&data.watcher, NULL, main_watcher, &data);
-
 	i = 0;
 	while (i < data.n)
 		waitpid(data.pid[i++], NULL, 0);
 	sem_post(data.dead);
 	pthread_join(data.watcher, NULL);
-
-	sem_close(data.forks);
-	sem_close(data.printing);
-	sem_close(data.dead);
-	sem_close(data.update);
+	close_sems(&data);
 }

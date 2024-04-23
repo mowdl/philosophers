@@ -40,6 +40,7 @@ int	parse_int(char *str, unsigned long *n)
 int	parse_args(int ac, char **av, t_data *data)
 {
 	unsigned long	tmp;
+
 	if (ac != 5 && ac != 6)
 		return (1);
 	if (parse_int(av[1], &tmp))

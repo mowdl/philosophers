@@ -15,7 +15,8 @@ RM = rm -f
 
 PHILO_SRCS = philo_bonus.c			\
 			 parse_args.c			\
-			 philo_process.c
+			 philo_process.c		\
+			 time_utils.c
 
 PHILO_OBJS = $(PHILO_SRCS:.c=.o)
 

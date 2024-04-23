@@ -28,7 +28,6 @@
 # define SEM_DEAD "/philo_dead"
 # define SEM_UPDATE "/philo_update"
 
-
 typedef struct s_data
 {
 	int				n;
@@ -45,7 +44,7 @@ typedef struct s_data
 	int				pid[200];
 }					t_data;
 
-typedef struct	philo
+typedef struct philo
 {
 	int				id;
 	t_data			*data;
@@ -53,15 +52,11 @@ typedef struct	philo
 	unsigned long	last_eat;
 	pthread_t		watcher;
 	pthread_t		time_to_die;
-	
 }					t_philo;
 
 int				parse_args(int ac, char **av, t_data *data);
-
 int				philo_process(t_data *data, int id);
 void			ft_sleep(unsigned long mili_sec);
 unsigned long	get_timestamp(void);
 
 #endif // !PHILO_BONUS_H
-
-
