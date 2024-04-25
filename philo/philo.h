@@ -6,7 +6,7 @@
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/22 19:59:10 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/03/22 19:59:10 by mel-meka         ###   ########.fr       */
+/*   Updated: 2024/04/25 14:36:07 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,16 @@
 
 struct			s_data;
 
-typedef struct s_philo {
+typedef struct s_philo
+{
 	pthread_t		thread;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	int				id;
-	int				eat_counter;
-	int				last_eat_time;
+	unsigned long	eat_counter;
+	pthread_mutex_t	last_eat_mutex;
+	pthread_mutex_t	eat_counter_mutex;
+	unsigned long	last_eat_time;
 	struct s_data	*data;
 }					t_philo;
 
@@ -38,7 +41,6 @@ typedef struct s_data
 	t_philo			*philos;
 	pthread_t		watcher_thread;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	printing;
 	int				n;
 	unsigned long	time_to_eat;
 	unsigned long	time_to_sleep;
@@ -46,13 +48,18 @@ typedef struct s_data
 	unsigned long	eat_max;
 	int				count_eat;
 	int				dead;
+	pthread_mutex_t	dead_mutex;
 }					t_data;
 
-t_philo	*get_philo(void);
+int				parse_args(int ac, char **av, t_data *data);
+int				create_threads(t_data *data);
+int				join_threads(t_data *data);
 
-int		create_threads(t_data *data);
-int		join_threads(t_data *data);
+void			*watcher(void *arg);
 
-unsigned long	get_timestamp();
+void			*philo_routine(t_philo *philo);
+void			ft_sleep(unsigned long mili_sec);
+
+unsigned long	get_timestamp(void);
 
 #endif // !PHILO_H
