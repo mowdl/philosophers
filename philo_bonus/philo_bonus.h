@@ -58,5 +58,6 @@ int				parse_args(int ac, char **av, t_data *data);
 int				philo_process(t_data *data, int id);
 void			ft_sleep(unsigned long mili_sec);
 unsigned long	get_timestamp(void);
+void			*watcher(void *arg);
 
 #endif // !PHILO_BONUS_H

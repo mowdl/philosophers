@@ -12,31 +12,6 @@
 
 #include "philo_bonus.h"
 
-void	*watcher(void *arg)
-{
-	t_philo			*philo;
-	unsigned long	last_eat;
-	unsigned long	eat_count;
-
-	philo = arg;
-	while (1)
-	{
-		ft_sleep(5);
-		sem_wait(philo->data->update);
-		last_eat = philo->last_eat;
-		eat_count = philo->eat_count;
-		sem_post(philo->data->update);
-		if (philo->data->count_eat && eat_count >= philo->data->eat_max)
-			return (NULL);
-		if (get_timestamp() - last_eat >= philo->data->time_to_die)
-			break ;
-	}
-	sem_wait(philo->data->printing);
-	printf("%ld %i died\n", get_timestamp(), philo->id);
-	sem_post(philo->data->dead);
-	return (NULL);
-}
-
 void	eat(t_philo *philo)
 {
 	sem_wait(philo->data->forks);
@@ -56,6 +31,24 @@ void	eat(t_philo *philo)
 	sem_post(philo->data->forks);
 }
 
+unsigned long	get_last_eat_time(t_philo *philo)
+{
+	unsigned long	tmp;
+
+	sem_wait(philo->data->update);
+	tmp = philo->last_eat;
+	sem_post(philo->data->update);
+	return (tmp);
+}
+
+void	philo_sleep(t_philo *philo)
+{
+	sem_wait(philo->data->printing);
+	printf("%ld %i is sleeping\n", get_timestamp(), philo->id);
+	sem_post(philo->data->printing);
+	ft_sleep(philo->data->time_to_sleep);
+}
+
 void	routine(t_philo *philo)
 {
 	sem_wait(philo->data->printing);
@@ -73,13 +66,13 @@ void	routine(t_philo *philo)
 			&& philo->eat_count++ == philo->data->eat_max)
 			return ;
 		sem_post(philo->data->update);
-		sem_wait(philo->data->printing);
-		printf("%ld %i is sleeping\n", get_timestamp(), philo->id);
-		sem_post(philo->data->printing);
-		ft_sleep(philo->data->time_to_sleep);
+		philo_sleep(philo);
 		sem_wait(philo->data->printing);
 		printf("%ld %i is thinking\n", get_timestamp(), philo->id);
 		sem_post(philo->data->printing);
+		ft_sleep((philo->data->time_to_die
+				- (get_timestamp() - get_last_eat_time(philo)))
+			/ 2);
 	}
 }
 

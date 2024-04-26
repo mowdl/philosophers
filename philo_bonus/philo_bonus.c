@@ -16,6 +16,8 @@ int	init_data(int ac, char **av, t_data *data)
 {
 	if (parse_args(ac, av, data))
 		return (1);
+	if (data->count_eat && data->eat_max < 1)
+		return (1);
 	data->forks = sem_open(SEM_FORKS, O_CREAT | O_EXCL, 0666, data->n);
 	data->printing = sem_open(SEM_PRINT, O_CREAT | O_EXCL, 0666, 1);
 	data->dead = sem_open(SEM_DEAD, O_CREAT | O_EXCL, 0666, 0);

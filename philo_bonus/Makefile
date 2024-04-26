@@ -6,7 +6,7 @@
 #    By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/25 18:52:03 by mel-meka          #+#    #+#              #
-#    Updated: 2024/03/20 01:18:40 by mel-meka         ###   ########.fr        #
+#    Updated: 2024/04/26 11:37:51 by mel-meka         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,8 @@ RM = rm -f
 PHILO_SRCS = philo_bonus.c			\
 			 parse_args.c			\
 			 philo_process.c		\
-			 time_utils.c
+			 time_utils.c			\
+			 watcher.c
 
 PHILO_OBJS = $(PHILO_SRCS:.c=.o)
 
@@ -24,7 +25,7 @@ INCLUDES = -pthread
 
 NAME = philo_bonus
 
-CFLAGS = -g -Wall -Wextra -Werror $(INCLUDES)
+CFLAGS = -g -O3 -pthread -Wall -Wextra -Werror $(INCLUDES)
 
 all: $(NAME)
 
