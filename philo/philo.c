@@ -6,18 +6,11 @@
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/22 19:59:02 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/04/25 14:28:16 by mel-meka         ###   ########.fr       */
+/*   Updated: 2024/04/26 08:52:02 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-t_data	*get_data(void)
-{
-	static t_data	data;
-
-	return (&data);
-}
 
 int	philo_clean(t_data *data)
 {
@@ -41,13 +34,30 @@ int	init_philo(t_data *data)
 		data->philos[i].last_eat_time = 0;
 		data->philos[i].data = data;
 		data->philos[i].eat_counter = 0;
-		if (pthread_mutex_init(&(data->philos[i].last_eat_mutex), NULL))
-			return (1);
-		if (pthread_mutex_init(&(data->philos[i].eat_counter_mutex), NULL))
-			return (1);
 		i++;
 	}
 	return (0);
+}
+
+void	assign_forks(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->n)
+	{
+		if (i % 2)
+		{
+			data->philos[i].left_fork = &data->forks[(i + 1) % data->n];
+			data->philos[i].right_fork = &data->forks[i];
+		}
+		else
+		{
+			data->philos[i].right_fork = &data->forks[(i + 1) % data->n];
+			data->philos[i].left_fork = &data->forks[i];
+		}
+		i++;
+	}
 }
 
 int	init_forks(t_data *data)
@@ -63,13 +73,7 @@ int	init_forks(t_data *data)
 		if (pthread_mutex_init(data->forks + i++, NULL))
 			return (1);
 	}
-	i = 0;
-	while (i < data->n)
-	{
-		data->philos[i].left_fork = &data->forks[(i + 1) % data->n];
-		data->philos[i].right_fork = &data->forks[i];
-		i++;
-	}
+	assign_forks(data);
 	return (0);
 }
 

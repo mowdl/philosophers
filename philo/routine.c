@@ -6,7 +6,7 @@
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 13:15:51 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/04/25 14:29:52 by mel-meka         ###   ########.fr       */
+/*   Updated: 2024/04/26 11:24:27 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,21 @@ int	eat_and_sleep(t_philo *philo)
 	return (0);
 }
 
+void	*one_philo_case(t_philo *philo)
+{
+	pthread_mutex_lock(philo->left_fork);
+	ft_sleep(philo->data->time_to_die);
+	pthread_mutex_unlock(philo->left_fork);
+	return (NULL);
+}
+
 void	*philo_routine(t_philo *philo)
 {
 	unsigned long	last_eat_time;
 
 	printf("%ld %i is thinking\n", get_timestamp(), philo->id);
+	if (philo->data->n == 1)
+		return (one_philo_case(philo));
 	if (philo->id % 2)
 		ft_sleep(philo->data->time_to_eat / 2);
 	while (1)

@@ -6,7 +6,7 @@
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/22 19:59:10 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/04/25 14:36:07 by mel-meka         ###   ########.fr       */
+/*   Updated: 2024/04/26 08:51:54 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ typedef struct s_philo
 	pthread_mutex_t	*right_fork;
 	int				id;
 	unsigned long	eat_counter;
-	pthread_mutex_t	last_eat_mutex;
-	pthread_mutex_t	eat_counter_mutex;
 	unsigned long	last_eat_time;
 	struct s_data	*data;
 }					t_philo;

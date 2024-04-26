@@ -6,7 +6,7 @@
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 14:31:56 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/04/25 15:01:00 by mel-meka         ###   ########.fr       */
+/*   Updated: 2024/04/26 08:15:26 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ int	watcher_loop(t_data *data, int *done_flag)
 				printf("%ld %i died\n", get_timestamp(), i + 1);
 				data->dead = 1;
 				pthread_mutex_unlock(&data->dead_mutex);
-				unlock_forks(data);
 				return (1);
 			}
 		}

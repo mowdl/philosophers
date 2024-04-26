@@ -6,7 +6,7 @@
 #    By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/25 18:52:03 by mel-meka          #+#    #+#              #
-#    Updated: 2024/04/25 14:36:38 by mel-meka         ###   ########.fr        #
+#    Updated: 2024/04/26 11:28:25 by mel-meka         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ INCLUDES = -pthread
 
 NAME = philo
 
-CFLAGS = -g -fsanitize=address -Wall -Wextra -Werror $(INCLUDES)
+CFLAGS = -g -Wall -Wextra -Werror $(INCLUDES)
 
 all: $(NAME)
 
