@@ -12,16 +12,13 @@
 
 #include "philo.h"
 
-void	*philo_routine_wraper(void *arg)
-{
-	return (philo_routine((t_philo *)arg));
-}
-
 int	create_threads(t_data *data)
 {
 	long	i;
 
 	get_timestamp();
+	if (pthread_create(&data->watcher_thread, NULL, &watcher, data))
+		return (1);
 	i = 0;
 	while (i < data->n)
 	{
@@ -32,8 +29,6 @@ int	create_threads(t_data *data)
 			return (1);
 		i++;
 	}
-	if (pthread_create(&data->watcher_thread, NULL, &watcher, data))
-		return (1);
 	return (0);
 }
 

@@ -26,7 +26,7 @@ INCLUDES = -pthread
 
 NAME = philo
 
-CFLAGS = -g -Wall -Wextra -Werror $(INCLUDES)
+CFLAGS = -g -O3 -Wall -Wextra -Werror $(INCLUDES)
 
 all: $(NAME)
 

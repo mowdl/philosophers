@@ -56,6 +56,7 @@ int				join_threads(t_data *data);
 void			*watcher(void *arg);
 
 void			*philo_routine(t_philo *philo);
+void			*philo_routine_wraper(void *arg);
 void			ft_sleep(unsigned long mili_sec);
 
 unsigned long	get_timestamp(void);
