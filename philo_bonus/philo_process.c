@@ -84,7 +84,8 @@ int	philo_process(t_data *data, int id)
 	philo.data = data;
 	philo.eat_count = 0;
 	philo.last_eat = 0;
-	pthread_create(&philo.watcher, NULL, &watcher, &philo);
+	if (pthread_create(&philo.watcher, NULL, &watcher, &philo))
+		return (1);
 	routine(&philo);
 	sem_post(philo.data->update);
 	pthread_join(philo.watcher, NULL);

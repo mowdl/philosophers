@@ -77,7 +77,8 @@ int	main(int ac, char **av)
 			return (philo_process(&data, i + 1));
 		i++;
 	}
-	pthread_create(&data.watcher, NULL, main_watcher, &data);
+	if (pthread_create(&data.watcher, NULL, main_watcher, &data))
+		return (1);
 	i = 0;
 	while (i < data.n)
 		waitpid(data.pid[i++], NULL, 0);

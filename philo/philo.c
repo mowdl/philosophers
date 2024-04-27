@@ -82,7 +82,7 @@ int	main(int ac, char **av)
 	t_data	data;
 
 	if (parse_args(ac, av, &data))
-		return (philo_clean(&data));
+		return (1);
 	if (data.count_eat && data.eat_max == 0)
 		return (0);
 	if (pthread_mutex_init(&data.dead_mutex, NULL))
