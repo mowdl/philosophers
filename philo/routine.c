@@ -32,16 +32,12 @@ int	take_forks(t_philo *philo)
 		return (1);
 	}
 	printf("%ld %i has taken a fork\n", get_timestamp(), philo->id);
-	pthread_mutex_unlock(&philo->data->dead_mutex);
 	return (0);
 }
 
 int	eat_and_sleep(t_philo *philo)
 {
 	if (take_forks(philo))
-		return (1);
-	pthread_mutex_lock(&philo->data->dead_mutex);
-	if (philo->data->dead)
 		return (1);
 	philo->last_eat_time = get_timestamp();
 	printf("%ld %i is eating\n", get_timestamp(), philo->id);
@@ -72,15 +68,6 @@ void	*philo_routine(t_philo *philo)
 {
 	unsigned long	last_eat_time;
 
-	pthread_mutex_lock(&philo->data->dead_mutex);
-	if (philo->data->dead)
-		return (NULL);
-	printf("%ld %i is thinking\n", get_timestamp(), philo->id);
-	pthread_mutex_unlock(&philo->data->dead_mutex);
-	if (philo->data->n == 1)
-		return (one_philo_case(philo));
-	if (philo->id % 2)
-		ft_sleep(philo->data->time_to_eat / 2);
 	while (1)
 	{
 		if (eat_and_sleep(philo))
@@ -94,12 +81,27 @@ void	*philo_routine(t_philo *philo)
 		ft_sleep((philo->data->time_to_die
 				- (get_timestamp() - last_eat_time)) / 2);
 	}
+	pthread_mutex_unlock(&philo->data->dead_mutex);
 	return (NULL);
 }
 
 void	*philo_routine_wraper(void *arg)
 {
-	philo_routine((t_philo *)arg);
-	pthread_mutex_unlock(&((t_philo *)arg)->data->dead_mutex);
+	t_philo	*philo;
+
+	philo = arg;
+	pthread_mutex_lock(&philo->data->dead_mutex);
+	if (philo->data->dead)
+	{
+		pthread_mutex_unlock(&philo->data->dead_mutex);
+		return (NULL);
+	}
+	printf("%ld %i is thinking\n", get_timestamp(), philo->id);
+	pthread_mutex_unlock(&philo->data->dead_mutex);
+	if (philo->data->n == 1)
+		return (one_philo_case(philo));
+	if (philo->id % 2)
+		ft_sleep(philo->data->time_to_eat / 2);
+	philo_routine(philo);
 	return (NULL);
 }
