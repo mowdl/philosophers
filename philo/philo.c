@@ -12,20 +12,10 @@
 
 #include "philo.h"
 
-int	philo_clean(t_data *data)
-{
-	free(data->philos);
-	free(data->forks);
-	return (1);
-}
-
 int	init_philo(t_data *data)
 {
 	int	i;
 
-	data->philos = malloc(sizeof(t_philo) * data->n);
-	if (data->philos == NULL)
-		return (-1);
 	memset(data->philos, 0, sizeof(t_philo) * data->n);
 	i = 0;
 	while (i < data->n)
@@ -64,9 +54,6 @@ int	init_forks(t_data *data)
 {
 	int	i;
 
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->n);
-	if (data->forks == NULL)
-		return (1);
 	i = 0;
 	while (i < data->n)
 	{
@@ -86,14 +73,13 @@ int	main(int ac, char **av)
 	if (data.count_eat && data.eat_max == 0)
 		return (0);
 	if (pthread_mutex_init(&data.dead_mutex, NULL))
-		return (philo_clean(&data));
+		return (1);
 	data.dead = 0;
 	if (init_philo(&data))
-		return (philo_clean(&data));
+		return (1);
 	if (init_forks(&data))
-		return (philo_clean(&data));
+		return (1);
 	if (create_threads(&data))
-		return (philo_clean(&data));
+		return (1);
 	join_threads(&data);
-	philo_clean(&data);
 }

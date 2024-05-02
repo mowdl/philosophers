@@ -36,9 +36,9 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-	t_philo			*philos;
+	t_philo			philos[200];
 	pthread_t		watcher_thread;
-	pthread_mutex_t	*forks;
+	pthread_mutex_t	forks[200];
 	int				n;
 	unsigned long	time_to_eat;
 	unsigned long	time_to_sleep;
